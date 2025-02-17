@@ -1,5 +1,5 @@
 import { SharedStateContext } from "./SharedStateProvider"
-import React, { useContext, useEffect, useMemo } from "react"
+import { useContext, useEffect, useMemo } from "react"
 import useForceRerender from "./useForceRerender"
 import { useStorage } from "./useStorage"
 import { useDebouncedValue } from "./useDebouncedValue"
@@ -10,9 +10,6 @@ type StateInterface<T> = {
   setValue: (value: T) => void,
   clear: () => void
 }
-
-
-
 
 export function useSharedState<T, K extends string = string> (params: {
   key: K,
