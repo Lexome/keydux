@@ -1,6 +1,13 @@
 # keydux
 
-keydux is a lightweight shared state management library for React that offers a streamlined alternative to Redux. It provides hooks for a minimalistic API for reading, updating, and watching state changes across your application. With built-in support for debouncing updates and persisting state to storage, keydux reduces boilerplate while still delivering type safety and flexibility.
+Keydux is a lightweight shared state management library for React that offers a streamlined alternative to Redux
+and other state management libraries.
+
+Keydux provides hooks for a minimalistic API for reading, updating, and watching state changes across your application.
+Unlike the Context API, updates only rerender the components that hook into each state key, not the entire component tree
+under the provider. Keydux reduces boilerplate while
+delivering the performance optimizations, type safety, and flexibility you would get from Redux, other state management libraries,
+and other handrolled solutions.
 
 ## Features
 
@@ -22,7 +29,7 @@ yarn add keydux
 
 ## Usage
 
-### 1. Setting Up the Provider
+### Setting Up the Provider
 
 Wrap your entire application with the `SharedStateProvider` to enable shared state management:
 
@@ -40,7 +47,7 @@ ReactDOM.render(
 );
 ```
 
-### 2. Creating a Shared State
+### Creating a Shared State
 
 Use the `useSharedState` hook to manage a shared piece of state. The hook provides:
 - `value`: the current value.
@@ -55,7 +62,7 @@ import React from "react";
 import { useSharedState } from "keydux/src/useSharedState";
 
 const useCounter = () => {
-  const { value: count, debouncedValue, setValue, clear } = useSharedState({
+  return useSharedState({
     key: "counter",
     initialValue: 0,
     debounceTime: 1000,
@@ -63,7 +70,7 @@ const useCounter = () => {
 }
 
 function Counter() {
-  const { setValue } = useCounter()
+  const { setValue: setCount, clear } = useCounter()
 
   return (
     <div>
@@ -89,7 +96,7 @@ function CounterDisplay() {
 export default Counter;
 ```
 
-### 3. Adding Type Safety
+### Adding Type Safety
 
 keydux is written in TypeScript, so you can easily enforce type safety by providing an explicit type for your state values. This helps catch errors at compile time and provides better autocompletion. You can also use the `createUseSharedState` function to provide type safety 
 for your state key values.
@@ -131,7 +138,7 @@ function UserProfile() {
 export default UserProfile;
 ```
 
-### 4. Debouncing State Updates
+### Debouncing State Updates
 
 Avoid performance issues through debouncing, which delays the propagation of state changes until the specified time has elapsed. This is especially useful when reacting to fast-changing input, such as text inputs:
 
@@ -171,7 +178,7 @@ function SearchInput() {
 export default SearchInput;
 ```
 
-### 5. Saving State to Storage
+### Saving State to Storage
 
 To persist state changes (for example, between page reloads), enable storage support by setting `shouldSaveToStorage` to `true`. keydux utilizes a storage adapter that defaults to localStorage (with a fallback if not in the browser):
 
