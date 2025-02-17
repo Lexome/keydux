@@ -17,6 +17,8 @@ and other handrolled solutions.
 - **Avoids Context API pitfalls** Unlike Context API, developers don't need to constantly search for context providers in their true or worry about global rerenders
 - **Persistent Storage:** Optionally save state changes to localStorage (or a fallback) with minimal configuration.
 - **Type Safety:** Fully typed with TypeScript to ensure reliable state management.
+- **No Dependencies:** keydux has no dependencies other than React (a peer dependency)
+- **Lightweight:** keydux is extremely lightweight -- 1kb minified and gzipped, 75% smaller than Redux
 
 ## Installation
 
