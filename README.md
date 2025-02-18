@@ -72,12 +72,12 @@ const useCounter = () => {
 }
 
 function Counter() {
-  const { setValue: setCount, clear } = useCounter()
+  const { setValue: setCount, value: count, clear } = useCounter()
 
   return (
     <div>
       <h1>Counter: {count}</h1>
-      <button onClick={() => setValue(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
       <button onClick={clear}>Reset</button>
       <CounterDisplay />
     </div>
