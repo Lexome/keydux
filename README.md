@@ -77,7 +77,7 @@ function Counter() {
   return (
     <div>
       <h1>Counter: {count}</h1>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(count => count + 1)}>Increment</button>
       <button onClick={clear}>Reset</button>
       <CounterDisplay />
     </div>
@@ -214,6 +214,34 @@ function TodoList() {
 }
 
 export default TodoList;
+```
+
+### Updatng state outside of React
+
+You can also update state outside of React by instantiating 
+a `StateManager` instance and passing it to the `SharedStateProvider`.
+
+The `StateManager` instance has `read` and `write` methods that can be
+call directy to access and update state outside of React
+
+```tsx:src/OutsideReactExample.tsx
+import { StateManager } from "keydux";
+import { router } from "./router";
+import { STATE_KEY } from "./constants";
+
+const stateManager = new StateManager()
+
+router.on("beforeNavigate", () => {
+  stateManager.write(STATE_KEY.COUNTER, 0)
+})
+
+const MyApp = () => {
+  return (
+    <SharedStateProvider stateManager={stateManager}>
+      <App />
+    </SharedStateProvider>
+  )
+}
 ```
 
 ## Comparison to Redux

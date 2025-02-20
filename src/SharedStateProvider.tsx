@@ -1,3 +1,4 @@
+
 import React, { FC, PropsWithChildren, useRef } from "react"
 
 type SharedState = {
@@ -26,51 +27,71 @@ export type RenderFunction = ({
   newValue: any
 }) => void
 
-export const SharedStateProvider: FC<PropsWithChildren> = ({ children }) => {
-  const state = useRef<SharedState>({})
-  const rerendersToTrigger = useRef<{
+
+
+export class StateManager {
+  state: SharedState
+  rerendersToTrigger: {
     [key: string]: RenderFunction[]
-  }>({})
+  }
 
-  function write<T = any>(key: string, value: T) {
-    const lastValue = state.current[key]
+  constructor() {
+    this.state = {}
+    this.rerendersToTrigger = {}
+    this.read = this.read.bind(this)
+    this.write = this.write.bind(this)
+    this.watchForUpdates = this.watchForUpdates.bind(this)
+    this.endWatch = this.endWatch.bind(this)
+  }
 
-    state.current[key] = value
+  write<T = any>(key: string, value: T) {
+    const lastValue = this.state[key]
 
-    rerendersToTrigger.current[key]?.forEach((render) => {
+    this.state[key] = value
+
+    this.rerendersToTrigger[key]?.forEach((render) => {
       render({ lastValue, newValue: value })
     })
   }
 
-  function read() {
-    return state.current
+  read() {
+    return this.state
   }
 
-  // Adds rerender function to trigger when a key's value changes
-  function watchForUpdates(key: string, rerenderFunction: RenderFunction) {
-    if (!rerendersToTrigger.current[key]) {
-      rerendersToTrigger.current[key] = []
+  watchForUpdates(key: string, rerenderFunction: RenderFunction) {
+    if (!this.rerendersToTrigger[key]) {
+      this.rerendersToTrigger[key] = []
     }
-    rerendersToTrigger.current[key].push(rerenderFunction)
+
+    this.rerendersToTrigger[key].push(rerenderFunction)
   }
 
-  // Removes rerender function watched for a key
-  function endWatch(key: string, rerenderFunction: Function) {
-    rerendersToTrigger.current[key] =
-      rerendersToTrigger.current[key].filter((s) => s !== rerenderFunction)
+  endWatch(key: string, subscription: RenderFunction) {
+    this.rerendersToTrigger[key] = this.rerendersToTrigger[key].filter((s) => s !== subscription)
   }
+}
+
+type SharedStateProviderProps = PropsWithChildren<{
+  stateManager: StateManager
+}>
+
+
+export const SharedStateProvider: FC<SharedStateProviderProps> = ({
+  children,
+  stateManager: stateManagerProp
+}) => {
+  const stateManager = useRef<StateManager>(stateManagerProp || new StateManager())
 
   return (
     <SharedStateContext.Provider
       value={{
-        read,
-        write,
-        watchForUpdates,
-        endWatch
+        read: stateManager.current.read,
+        write: stateManager.current.write,
+        watchForUpdates: stateManager.current.watchForUpdates,
+        endWatch: stateManager.current.endWatch
       }}
     >
       {children}
     </SharedStateContext.Provider>
   )
 }
-

@@ -7,9 +7,13 @@ import { useDebouncedValue } from "./useDebouncedValue"
 type StateInterface<T> = {
   value: T,
   debouncedValue: T,
-  setValue: (value: T) => void,
+  setValue: (value: ValueOrFunction<T>) => void,
   clear: () => void
 }
+
+type TransformFunction<T = any> = (lastValue: T) => T
+
+type ValueOrFunction<T = any> = T | TransformFunction<T>
 
 export function useSharedState<T, K extends string = string> (params: {
   key: K,
@@ -51,7 +55,11 @@ export function useSharedState<T, K extends string = string> (params: {
     }
   })
 
-  const update = (value: T) => {
+  const update = (value: ValueOrFunction<T>) => {
+    if (typeof value === 'function') {
+      value = (value as TransformFunction<T>)(read()[key])
+    }
+
     write(key, value)
 
     if (shouldSaveToStorage) {
@@ -90,4 +98,4 @@ export const createUseSharedState = <K extends string> () => {
     })
   }
 }
- 
+
