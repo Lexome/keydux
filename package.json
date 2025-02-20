@@ -1,6 +1,6 @@
 {
   "name": "keydux",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "files": [
     "dist",
     "src"
@@ -29,7 +29,7 @@
     "trailingComma": "es5"
   },
   "main": "dist/index.js",
-  "module": "dist/web.esm.js",
+  "module": "dist/keydux.esm.js",
   "size-limit": [
     {
       "path": "dist/web.cjs.production.min.js",
